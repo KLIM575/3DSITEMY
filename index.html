@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KLIM DUSHKIN — Architect. Designer. Developer.</title>
+  <meta name="description" content="KLIM DUSHKIN — Architect, Designer, Developer. Creating immersive digital experiences of any complexity.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;background:#000;color:#fff;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+    #webgl-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+    /* Loading */
+    #loading{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;transition:opacity 1s ease}
+    #loading.hidden{opacity:0;pointer-events:none}
+    .loading-logo{font-size:1.2rem;font-weight:600;letter-spacing:8px;text-transform:uppercase;color:rgba(255,255,255,0.8)}
+    .loading-bar-wrap{width:160px;height:1px;background:rgba(255,255,255,0.06);overflow:hidden}
+    .loading-bar{width:0%;height:100%;background:rgba(255,255,255,0.6);transition:width 0.3s}
+    .loading-text{font-size:0.65rem;letter-spacing:4px;color:rgba(255,255,255,0.25);text-transform:uppercase}
+
+    /* Fixed nav */
+    .nav{position:fixed;top:0;left:0;width:100%;padding:28px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;mix-blend-mode:difference;transition:opacity 0.4s}
+    .nav-brand{font-size:0.85rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#fff;cursor:pointer}
+    .nav-links{display:flex;gap:32px}
+    .nav-links a{color:rgba(255,255,255,0.4);text-decoration:none;font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;transition:color 0.3s;cursor:pointer}
+    .nav-links a:hover,.nav-links a.active{color:#fff}
+
+    /* Scroll sections */
+    .scroll-container{position:relative;z-index:10}
+    .section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 40px;position:relative}
+    .section-inner{max-width:1200px;width:100%;opacity:0;transform:translateY(60px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1)}
+    .section.visible .section-inner{opacity:1;transform:translateY(0)}
+
+    /* Section: Hero */
+    #hero{min-height:100vh;flex-direction:column;text-align:center}
+    .hero-label{font-size:0.7rem;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:24px}
+    .hero-name{font-size:clamp(2.5rem,8vw,7rem);font-weight:700;line-height:0.95;letter-spacing:-3px;margin-bottom:20px;color:#fff}
+    .hero-role{font-size:clamp(0.8rem,1.5vw,1rem);font-weight:300;color:rgba(255,255,255,0.35);letter-spacing:4px;text-transform:uppercase;margin-bottom:60px}
+    .hero-desc{max-width:520px;font-size:0.95rem;line-height:1.8;color:rgba(255,255,255,0.4);font-weight:300}
+    .scroll-indicator{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px}
+    .scroll-indicator span{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2)}
+    .scroll-line{width:1px;height:40px;background:rgba(255,255,255,0.15);animation:scrollPulse 2.5s ease-in-out infinite}
+    @keyframes scrollPulse{0%,100%{opacity:0.2;transform:scaleY(0.4)}50%{opacity:1;transform:scaleY(1)}}
+
+    /* Section: Work */
+    #work{flex-direction:column;padding-top:120px;padding-bottom:120px}
+    .section-label{font-size:0.65rem;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:12px}
+    .section-title{font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:-2px;margin-bottom:60px;color:#fff}
+    .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;width:100%}
+    .project-card{position:relative;aspect-ratio:16/10;overflow:hidden;cursor:pointer;background:#0a0a0a}
+    .project-card img{width:100%;height:100%;object-fit:cover;opacity:0.6;transition:opacity 0.6s,transform 0.8s cubic-bezier(0.16,1,0.3,1);filter:grayscale(0.3)}
+    .project-card:hover img{opacity:0.9;transform:scale(1.04);filter:grayscale(0)}
+    .project-card-overlay{position:absolute;bottom:0;left:0;width:100%;padding:24px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);opacity:0;transform:translateY(10px);transition:all 0.5s}
+    .project-card:hover .project-card-overlay{opacity:1;transform:translateY(0)}
+    .project-card-number{font-size:0.65rem;letter-spacing:3px;color:rgba(255,255,255,0.4);margin-bottom:6px}
+    .project-card-title{font-size:1.1rem;font-weight:600;margin-bottom:4px}
+    .project-card-cat{font-size:0.75rem;color:rgba(255,255,255,0.35)}
+
+    /* Section: About */
+    #about{flex-direction:column}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+    .about-left h3{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:600;line-height:1.3;margin-bottom:24px;letter-spacing:-1px}
+    .about-left p{font-size:0.95rem;line-height:1.9;color:rgba(255,255,255,0.4);font-weight:300;margin-bottom:16px}
+    .about-right{padding-top:40px}
+    .about-stats{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px}
+    .stat-number{font-size:2.5rem;font-weight:700;letter-spacing:-2px;color:#fff;margin-bottom:4px}
+    .stat-label{font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+    .skills-list{display:flex;flex-direction:column;gap:12px}
+    .skill-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .skill-name{font-size:0.85rem;color:rgba(255,255,255,0.6)}
+    .skill-level{font-size:0.7rem;color:rgba(255,255,255,0.2);letter-spacing:1px}
+
+    /* Section: Services */
+    #services{flex-direction:column}
+    .services-list{width:100%}
+    .service-item{display:grid;grid-template-columns:60px 1fr 1fr 40px;gap:24px;align-items:center;padding:36px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.4s;cursor:default}
+    .service-item:hover{padding-left:16px;border-color:rgba(255,255,255,0.1)}
+    .service-num{font-size:0.7rem;letter-spacing:2px;color:rgba(255,255,255,0.15)}
+    .service-name{font-size:1.3rem;font-weight:600;letter-spacing:-0.5px}
+    .service-desc{font-size:0.85rem;color:rgba(255,255,255,0.3);line-height:1.6;font-weight:300}
+    .service-arrow{font-size:1.2rem;color:rgba(255,255,255,0.1);transition:all 0.3s;text-align:right}
+    .service-item:hover .service-arrow{color:rgba(255,255,255,0.5);transform:translateX(4px)}
+
+    /* Section: Contact */
+    #contact{flex-direction:column;min-height:100vh}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;width:100%}
+    .contact-info{display:flex;flex-direction:column;gap:32px}
+    .contact-item-label{font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:6px}
+    .contact-item-value{font-size:1.1rem;color:rgba(255,255,255,0.8);font-weight:300}
+    .contact-item-value a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15);transition:border-color 0.3s}
+    .contact-item-value a:hover{border-color:rgba(255,255,255,0.5)}
+    .contact-form{display:flex;flex-direction:column;gap:16px}
+    .form-input{width:100%;padding:16px 0;border:none;border-bottom:1px solid rgba(255,255,255,0.08);background:transparent;color:#fff;font-family:'Inter',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.3s;font-weight:300}
+    .form-input::placeholder{color:rgba(255,255,255,0.2)}
+    .form-input:focus{border-color:rgba(255,255,255,0.3)}
+    textarea.form-input{min-height:120px;resize:none}
+    .form-submit{align-self:flex-start;padding:14px 36px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:#fff;font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-weight:400;margin-top:12px}
+    .form-submit:hover{background:#fff;color:#000}
+
+    /* Footer */
+    .footer{padding:40px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center}
+    .footer span{font-size:0.65rem;color:rgba(255,255,255,0.15);letter-spacing:1px}
+
+    /* Mobile tabs */
+    .mobile-tabs{display:none;position:fixed;bottom:0;left:0;width:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);z-index:100;padding:8px 0 env(safe-area-inset-bottom,8px)}
+    .mobile-tabs-inner{display:flex;justify-content:space-around}
+    .mobile-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;cursor:pointer}
+    .mobile-tab svg{width:18px;height:18px;stroke:rgba(255,255,255,0.3);stroke-width:1.5;fill:none}
+    .mobile-tab span{font-size:0.55rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+    .mobile-tab.active svg{stroke:#fff}
+    .mobile-tab.active span{color:#fff}
+
+    /* AI Chat */
+    #aiChat{position:fixed;bottom:100px;right:30px;z-index:200;width:340px;max-height:480px;background:rgba(8,8,8,0.97);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(15px) scale(0.97);transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
+    #aiChat.open{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+    .chat-header{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center}
+    .chat-header h4{font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.7)}
+    .chat-close{width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .chat-close svg{width:12px;height:12px;stroke:rgba(255,255,255,0.4);stroke-width:1.5;fill:none}
+    .chat-messages{padding:14px 18px;height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+    .chat-msg{max-width:85%;padding:9px 13px;border-radius:12px;font-size:0.82rem;line-height:1.6}
+    .chat-msg.bot{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);border-bottom-left-radius:4px;align-self:flex-start}
+    .chat-msg.user{background:rgba(255,255,255,0.08);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+    .chat-input{padding:12px 14px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:8px}
+    .chat-input input{flex:1;padding:9px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff;font-size:0.82rem;outline:none;font-family:'Inter',sans-serif}
+    .chat-input input::placeholder{color:rgba(255,255,255,0.15)}
+    .chat-input button{width:34px;height:34px;border-radius:8px;border:none;background:rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.3s;flex-shrink:0}
+    .chat-input button:hover{background:rgba(255,255,255,0.2)}
+    .chat-input button svg{width:14px;height:14px;stroke:#fff;stroke-width:1.5;fill:none}
+
+    /* Chat toggle */
+    .chat-toggle{position:fixed;bottom:30px;right:30px;z-index:150;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+    .chat-toggle:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.06)}
+    .chat-toggle svg{width:20px;height:20px;stroke:rgba(255,255,255,0.5);stroke-width:1.5;fill:none}
+
+    /* Responsive */
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .mobile-tabs{display:block}
+      .projects-grid{grid-template-columns:1fr}
+      .about-grid{grid-template-columns:1fr;gap:40px}
+      .contact-grid{grid-template-columns:1fr;gap:40px}
+      .service-item{grid-template-columns:40px 1fr 40px;gap:16px}
+      .service-desc{display:none}
+      .section{padding:60px 20px}
+      .hero-name{letter-spacing:-1px}
+      #aiChat{right:10px;left:10px;width:auto;bottom:80px}
+      .chat-toggle{bottom:80px;right:15px}
+      .about-stats{grid-template-columns:1fr 1fr;gap:24px}
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="loading-logo">KLIM DUSHKIN</div>
+    <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+    <div class="loading-text">Loading</div>
+  </div>
+
+  <canvas id="webgl-canvas"></canvas>
+
+  <nav class="nav">
+    <div class="nav-brand" onclick="scrollToSection('hero')">KLIM DUSHKIN</div>
+    <div class="nav-links">
+      <a onclick="scrollToSection('hero')">Home</a>
+      <a onclick="scrollToSection('work')">Work</a>
+      <a onclick="scrollToSection('about')">About</a>
+      <a onclick="scrollToSection('services')">Services</a>
+      <a onclick="scrollToSection('contact')">Contact</a>
+    </div>
+  </nav>
+
+  <div class="scroll-container">
+    <!-- HERO -->
+    <section class="section" id="hero">
+      <div class="section-inner">
+        <p class="hero-label">Architect &middot; Designer &middot; Developer</p>
+        <h1 class="hero-name">KLIM<br>DUSHKIN</h1>
+        <p class="hero-role">Digital Experiences</p>
+        <p class="hero-desc">Создаю иммерсивные цифровые продукты любой сложности. От концепции до реализации — сайты, которые запоминаются.</p>
+      </div>
+      <div class="scroll-indicator">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section class="section" id="work">
+      <div class="section-inner">
+        <p class="section-label">Portfolio</p>
+        <h2 class="section-title">Selected Work</h2>
+        <div class="projects-grid" id="projectsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="section-inner">
+        <p class="section-label">Background</p>
+        <h2 class="section-title">About</h2>
+        <div class="about-grid">
+          <div class="about-left">
+            <h3>Душкин Клим<br>Анатольевич</h3>
+            <p>Архитектор и дизайнер с глубокой страстью к созданию иммерсивных цифровых переживаний. Верю, что каждый проект — это история, которую нужно рассказать через код, дизайн и технологии.</p>
+            <p>Специализируюсь на WebGL, 3D-графике, интерактивных инсталляциях и сложных веб-приложениях. Работаю с клиентами по всему миру.</p>
+          </div>
+          <div class="about-right">
+            <div class="about-stats">
+              <div><div class="stat-number">50+</div><div class="stat-label">Проектов</div></div>
+              <div><div class="stat-number">6</div><div class="stat-label">Лет опыта</div></div>
+              <div><div class="stat-number">30+</div><div class="stat-label">Клиентов</div></div>
+              <div><div class="stat-number">12</div><div class="stat-label">Наград</div></div>
+            </div>
+            <div class="skills-list" id="skillsList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section" id="services">
+      <div class="section-inner">
+        <p class="section-label">What I Do</p>
+        <h2 class="section-title">Services</h2>
+        <div class="services-list" id="servicesList"></div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section" id="contact">
+      <div class="section-inner">
+        <p class="section-label">Get In Touch</p>
+        <h2 class="section-title">Contact</h2>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <div>
+              <div class="contact-item-label">Имя</div>
+              <div class="contact-item-value">Душкин Клим Анатольевич</div>
+            </div>
+            <div>
+              <div class="contact-item-label">Телефон</div>
+              <div class="contact-item-value"><a href="tel:+79142008118">+7 (914) 200-81-18</a></div>
+            </div>
+            <div>
+              <div class="contact-item-label">Email</div>
+              <div class="contact-item-value"><a href="mailto:hello@klimdushkin.design">hello@klimdushkin.design</a></div>
+            </div>
+            <div>
+              <div class="contact-item-label">Локация</div>
+              <div class="contact-item-value">Россия, доступен worldwide</div>
+            </div>
+          </div>
+          <form class="contact-form" id="contactForm">
+            <input class="form-input" type="text" placeholder="Ваше имя" required>
+            <input class="form-input" type="email" placeholder="Email" required>
+            <input class="form-input" type="text" placeholder="Тема проекта">
+            <textarea class="form-input" placeholder="Расскажите о вашем проекте..." required></textarea>
+            <button type="submit" class="form-submit">Отправить</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <span>&copy; 2026 KLIM DUSHKIN</span>
+      <span>ALL RIGHTS RESERVED</span>
+    </div>
+  </div>
+
+  <!-- Mobile tabs -->
+  <div class="mobile-tabs">
+    <div class="mobile-tabs-inner">
+      <div class="mobile-tab active" onclick="scrollToSection('hero')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Home</span>
+      </div>
+      <div class="mobile-tab" onclick="scrollToSection('work')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>
+        <span>Work</span>
+      </div>
+      <div class="mobile-tab" onclick="scrollToSection('about')">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>About</span>
+      </div>
+      <div class="mobile-tab" onclick="scrollToSection('services')">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Services</span>
+      </div>
+      <div class="mobile-tab" onclick="scrollToSection('contact')">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>
+        <span>Contact</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Chat -->
+  <div class="chat-toggle" id="chatToggle">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <div id="aiChat">
+    <div class="chat-header">
+      <h4>KLIM AI Assistant</h4>
+      <div class="chat-close" id="chatClose">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Ask about projects, services...">
+      <button id="chatSend">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
