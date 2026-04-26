@@ -10,28 +10,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;background:#000;color:#fff;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+  html,body{width:100%;background:#000;color:#e9e9e9;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
     #webgl-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
     /* Loading */
     #loading{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;transition:opacity 1s ease}
     #loading.hidden{opacity:0;pointer-events:none}
-    .loading-logo{font-size:1.2rem;font-weight:600;letter-spacing:8px;text-transform:uppercase;color:rgba(255,255,255,0.8)}
+    .loading-logo{font-size:1.4rem;font-weight:600;letter-spacing:8px;text-transform:uppercase;color:rgba(255,255,255,0.8)}
     .loading-bar-wrap{width:160px;height:1px;background:rgba(255,255,255,0.06);overflow:hidden}
     .loading-bar{width:0%;height:100%;background:rgba(255,255,255,0.6);transition:width 0.3s}
-    .loading-text{font-size:0.65rem;letter-spacing:4px;color:rgba(255,255,255,0.25);text-transform:uppercase}
+    .loading-text{font-size:0.75rem;letter-spacing:4px;color:rgba(255,255,255,0.25);text-transform:uppercase}
 
     /* Fixed nav */
     .nav{position:fixed;top:0;left:0;width:100%;padding:28px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;mix-blend-mode:difference;transition:opacity 0.4s}
     .nav-brand{font-size:0.85rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#fff;cursor:pointer}
     .nav-links{display:flex;gap:32px}
-    .nav-links a{color:rgba(255,255,255,0.4);text-decoration:none;font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;transition:color 0.3s;cursor:pointer}
-    .nav-links a:hover,.nav-links a.active{color:#fff}
+    .nav-links a{color:rgba(232,232,232,0.95);text-decoration:none;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;transition:color 0.2s;cursor:pointer}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent)}
 
     /* Scroll sections */
     .scroll-container{position:relative;z-index:10}
     .section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 40px;position:relative}
-    .section-inner{max-width:1200px;width:100%;opacity:0;transform:translateY(60px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1)}
+  .section-inner{max-width:1200px;width:100%;opacity:0;transform:translateY(60px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1); font-size: clamp(0.95rem, 1vw, 1rem); color: var(--text)}
     .section.visible .section-inner{opacity:1;transform:translateY(0)}
 
     /* Section: Hero */
@@ -47,7 +47,7 @@
 
     /* Section: Work */
     #work{flex-direction:column;padding-top:120px;padding-bottom:120px}
-    .section-label{font-size:0.65rem;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:12px}
+    .section-label{font-size:0.75rem;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:12px}
     .section-title{font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:-2px;margin-bottom:60px;color:#fff}
     .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;width:100%}
     .project-card{position:relative;aspect-ratio:16/10;overflow:hidden;cursor:pointer;background:#0a0a0a}
@@ -55,9 +55,9 @@
     .project-card:hover img{opacity:0.9;transform:scale(1.04);filter:grayscale(0)}
     .project-card-overlay{position:absolute;bottom:0;left:0;width:100%;padding:24px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);opacity:0;transform:translateY(10px);transition:all 0.5s}
     .project-card:hover .project-card-overlay{opacity:1;transform:translateY(0)}
-    .project-card-number{font-size:0.65rem;letter-spacing:3px;color:rgba(255,255,255,0.4);margin-bottom:6px}
-    .project-card-title{font-size:1.1rem;font-weight:600;margin-bottom:4px}
-    .project-card-cat{font-size:0.75rem;color:rgba(255,255,255,0.35)}
+    .project-card-number{font-size:0.75rem;letter-spacing:3px;color:rgba(255,255,255,0.4);margin-bottom:6px}
+    .project-card-title{font-size:1.15rem;font-weight:600;margin-bottom:4px}
+    .project-card-cat{font-size:0.8rem;color:rgba(255,255,255,0.35)}
 
     /* Section: About */
     #about{flex-direction:column}
@@ -70,17 +70,29 @@
     .stat-label{font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
     .skills-list{display:flex;flex-direction:column;gap:12px}
     .skill-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
-    .skill-name{font-size:0.85rem;color:rgba(255,255,255,0.6)}
-    .skill-level{font-size:0.7rem;color:rgba(255,255,255,0.2);letter-spacing:1px}
+    .skill-name{font-size:0.92rem;color:rgba(255,255,255,0.6)}
+    .skill-level{font-size:0.8rem;color:rgba(255,255,255,0.28);letter-spacing:1px}
 
-    /* Section: Services */
+    /* Section: Designer */
+    #designer{flex-direction:column}
+    .designer-card{width:100%;display:grid;grid-template-columns:400px 1fr;gap:60px;align-items:center}
+    .designer-photo{aspect-ratio:3/4;background:#0a0a0a;border-radius:2px;overflow:hidden;position:relative}
+    .designer-photo img{width:100%;height:100%;object-fit:cover;opacity:0.8;filter:grayscale(0.2)}
+    .designer-photo::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border:1px solid rgba(255,255,255,0.05);pointer-events:none}
+    .designer-info h3{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:600;letter-spacing:-1px;margin-bottom:8px;line-height:1.2}
+    .designer-title{font-size:0.9rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:32px}
+    .designer-bio{font-size:1.05rem;line-height:1.9;color:rgba(255,255,255,0.45);font-weight:300;margin-bottom:20px}
+    .designer-social{display:flex;gap:16px;margin-top:24px}
+    .designer-social a{width:40px;height:40px;border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+    .designer-social a:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.05)}
+    .designer-social svg{width:18px;height:18px;stroke:rgba(255,255,255,0.5);stroke-width:1.5;fill:none}
     #services{flex-direction:column}
     .services-list{width:100%}
     .service-item{display:grid;grid-template-columns:60px 1fr 1fr 40px;gap:24px;align-items:center;padding:36px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.4s;cursor:default}
     .service-item:hover{padding-left:16px;border-color:rgba(255,255,255,0.1)}
     .service-num{font-size:0.7rem;letter-spacing:2px;color:rgba(255,255,255,0.15)}
     .service-name{font-size:1.3rem;font-weight:600;letter-spacing:-0.5px}
-    .service-desc{font-size:0.85rem;color:rgba(255,255,255,0.3);line-height:1.6;font-weight:300}
+    .service-desc{font-size:1.045rem;color:rgba(255,255,255,0.88);line-height:1.6;font-weight:300}
     .service-arrow{font-size:1.2rem;color:rgba(255,255,255,0.1);transition:all 0.3s;text-align:right}
     .service-item:hover .service-arrow{color:rgba(255,255,255,0.5);transform:translateX(4px)}
 
@@ -101,8 +113,8 @@
     .form-submit:hover{background:#fff;color:#000}
 
     /* Footer */
-    .footer{padding:40px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center}
-    .footer span{font-size:0.65rem;color:rgba(255,255,255,0.15);letter-spacing:1px}
+    .footer{padding:50px 40px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center}
+    .footer span{font-size:0.75rem;color:rgba(255,255,255,0.25);letter-spacing:1px}
 
     /* Mobile tabs */
     .mobile-tabs{display:none;position:fixed;bottom:0;left:0;width:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);z-index:100;padding:8px 0 env(safe-area-inset-bottom,8px)}
@@ -167,6 +179,7 @@
     <div class="nav-links">
       <a onclick="scrollToSection('hero')">Home</a>
       <a onclick="scrollToSection('work')">Work</a>
+      <a onclick="scrollToSection('designer')">Designer</a>
       <a onclick="scrollToSection('about')">About</a>
       <a onclick="scrollToSection('services')">Services</a>
       <a onclick="scrollToSection('contact')">Contact</a>
@@ -221,6 +234,30 @@
       </div>
     </section>
 
+    <!-- DESIGNER -->
+    <section class="section" id="designer">
+      <div class="section-inner">
+        <p class="section-label">Featured</p>
+        <h2 class="section-title">Pavel Vishnevsky</h2>
+        <div class="designer-card">
+          <div class="designer-photo">
+            <img src="/pavel.jpg" alt="Pavel Vishnevsky">
+          </div>
+          <div class="designer-info">
+            <h3>Pavel Vishnevsky</h3>
+            <p class="designer-title">Designer</p>
+            <p class="designer-bio">Талантливый дизайнер с уникальным видением. Специализируется на создании визуальных идентичностей, которые оставляют след. Работает на стыке искусства и технологий, создавая незабываемые впечатления.</p>
+            <p class="designer-bio">Сотрудничал с ведущими брендами мира, создавая дизайн для цифровых продуктов, брендинга и рекламных кампаний.</p>
+            <div class="designer-social">
+              <a href="#" title="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="1.5"/></svg></a>
+              <a href="#" title="Behance"><svg viewBox="0 0 24 24"><path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14h-8.027c.13 3.211 3.483 3.312 4.588 2.029h3.168zm-7.686-4h4.965c-.105-1.547-1.136-2.219-2.477-2.219-1.466 0-2.277.768-2.488 2.219zm-9.574 6.988h-6.466v-14.967h6.953c5.476.081 5.58 5.444 2.72 6.906 3.461 1.26 3.577 8.061-3.207 8.061zm-3.466-8.988h3.584c2.508 0 2.906-3-.312-3h-3.272v3zm3.391 3h-3.391v3.016h3.341c3.055 0 2.868-3.016.05-3.016z"/></svg></a>
+              <a href="#" title="Dribbble"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"/><path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"/><path d="M8.56 2.75c4.37 6 6 9.42 8 17.72"/></svg></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- SERVICES -->
     <section class="section" id="services">
       <div class="section-inner">
@@ -248,6 +285,17 @@
             <div>
               <div class="contact-item-label">Email</div>
               <div class="contact-item-value"><a href="mailto:hello@klimdushkin.design">hello@klimdushkin.design</a></div>
+            </div>
+            <div>
+              <div class="contact-item-label">Telegram</div>
+              <div class="contact-item-value">
+                <a href="https://t.me/YA_ODIN_K" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-label="Telegram" role="img" style="flex:0 0 auto;">
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
+                  </svg>
+                  YA_ODIN_K
+                </a>
+              </div>
             </div>
             <div>
               <div class="contact-item-label">Локация</div>
@@ -282,6 +330,10 @@
       <div class="mobile-tab" onclick="scrollToSection('work')">
         <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>
         <span>Work</span>
+      </div>
+      <div class="mobile-tab" onclick="scrollToSection('designer')">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Designer</span>
       </div>
       <div class="mobile-tab" onclick="scrollToSection('about')">
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>

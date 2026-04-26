@@ -88,7 +88,7 @@ function initScrollAnimations() {
   // Active nav link based on scroll position
   const navLinks = document.querySelectorAll('.nav-links a')
   const mobileTabs = document.querySelectorAll('.mobile-tab')
-  const sectionIds = ['hero', 'work', 'about', 'services', 'contact']
+  const sectionIds = ['hero', 'work', 'designer', 'about', 'services', 'contact']
 
   sectionIds.forEach((id, i) => {
     ScrollTrigger.create({
@@ -384,6 +384,21 @@ function initContactForm() {
   })
 }
 
+// Typography tweak: scale small fonts by 10% for better readability
+function scaleSmallFonts() {
+  const threshold = 14 // px; fonts at or below this size will be scaled
+  const all = document.querySelectorAll('*')
+  for (const el of all) {
+    // skip elements that opt-out if present
+    if (el.closest('[data-no-scale="true"]')) continue
+    const style = window.getComputedStyle(el)
+    const size = parseFloat(style.fontSize)
+    if (!isNaN(size) && size <= threshold) {
+      el.style.fontSize = (size * 1.1) + 'px'
+    }
+  }
+}
+
 // ====== BOOT ======
 function boot() {
   populateWork()
@@ -397,6 +412,8 @@ function boot() {
   const aiChat = new AIChat()
   document.getElementById('chatToggle').addEventListener('click', () => aiChat.open())
   document.getElementById('chatClose').addEventListener('click', () => aiChat.close())
+  // Typography tweak: scale small fonts by 10% for better readability
+  try { scaleSmallFonts() } catch (e) { console.warn('Typography scale failed', e) }
 
   animate()
   simulateLoading(() => {
