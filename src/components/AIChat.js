@@ -1,43 +1,64 @@
+/**
+ * Floating rule-based assistant. When manageToggle is false, the host must
+ * call toggle() after lazy-loading this module so the FAB still works once.
+ */
 export class AIChat {
-  constructor() {
+  constructor(options = {}) {
+    this.manageToggle = options.manageToggle !== false
     this.isOpen = false
     this.container = document.getElementById('aiChat')
+    this.toggleBtn = document.getElementById('chatToggle')
     this.messagesEl = document.getElementById('chatMessages')
     this.inputEl = document.getElementById('chatInput')
     this.sendBtn = document.getElementById('chatSend')
     this.closeBtn = document.getElementById('chatClose')
-    this.responses = {
-      'привет': 'Привет! Я AI ассистент Клима. Чем могу помочь?',
-      'hello': 'Hello! I\'m Klim\'s AI assistant. How can I help you?',
-      'услуги': 'Клим предлагает: создание сайтов на WebGL/Three.js, 3D визуализацию, интерактивные инсталляции, дизайн интерфейсов и full-stack разработку. Хотите узнать подробнее?',
-      'services': 'Klim offers: WebGL/Three.js websites, 3D visualization, interactive installations, UI/UX design, and full-stack development. Want to know more?',
-      'цена': 'Стоимость зависит от сложности проекта. Простой лендинг — от 50 000₽, интерактивный сайт с 3D — от 150 000₽. Для точной оценки свяжитесь с Климом напрямую.',
-      'price': 'Pricing depends on project complexity. Simple landing page — from $700, interactive 3D website — from $2000. Contact Klim directly for an accurate quote.',
-      'контакты': 'Телефон: +7 (914) 200-81-18. Также можете заполнить форму на странице Contact.',
-      'contact': 'Phone: +7 (914) 200-81-18. You can also fill out the form on the Contact page.',
-      'портфолио': 'В портфолио Клима более 10 проектов — от иммерсивных 3D-сайтов до интерактивных инсталляций. Перейдите на страницу Work, чтобы увидеть все проекты.',
-      'portfolio': 'Klim\'s portfolio includes 10+ projects — from immersive 3D websites to interactive installations. Visit the Work page to see them all.',
-      'skills': 'Клим владеет: Three.js, WebGL, GLSL, React, Vue, Node.js, Blender, Houdini, GSAP, Figma и многим другим.',
-      'default': 'Интересный вопрос! Для детального обсуждения рекомендую связаться с Климом напрямую. Телефон: +7 (914) 200-81-18'
-    }
+    this.responses = new Map([
+      ['привет', 'Привет! Я AI ассистент Клима. Чем могу помочь?'],
+      ['hello', 'Hello! I\'m Klim\'s AI assistant. How can I help you?'],
+      ['услуги', 'Клим предлагает: создание сайтов на WebGL/Three.js, 3D визуализацию, интерактивные инсталляции, дизайн интерфейсов и full-stack разработку. Хотите узнать подробнее?'],
+      ['services', 'Klim offers: WebGL/Three.js websites, 3D visualization, interactive installations, UI/UX design, and full-stack development. Want to know more?'],
+      ['цена', 'Стоимость зависит от сложности проекта. Простой лендинг — от 50 000₽, интерактивный сайт с 3D — от 150 000₽. Для точной оценки свяжитесь с Климом напрямую.'],
+      ['price', 'Pricing depends on project complexity. Simple landing page — from $700, interactive 3D website — from $2000. Contact Klim directly for an accurate quote.'],
+      ['контакты', 'Телефон: +7 (914) 200-81-18. Также можете заполнить форму на странице Contact.'],
+      ['contact', 'Phone: +7 (914) 200-81-18. You can also fill out the form on the Contact page.'],
+      ['портфолио', 'В портфолио Клима более 10 проектов — от иммерсивных 3D-сайтов до интерактивных инсталляций. Перейдите на страницу Work, чтобы увидеть все проекты.'],
+      ['portfolio', 'Klim\'s portfolio includes 10+ projects — from immersive 3D websites to interactive installations. Visit the Work page to see them all.'],
+      ['skills', 'Клим владеет: Three.js, WebGL, GLSL, React, Vue, Node.js, Blender, Houdini, GSAP, Figma и многим другим.']
+    ])
+    this.defaultReply = 'Интересный вопрос! Для детального обсуждения рекомендую связаться с Климом напрямую. Телефон: +7 (914) 200-81-18'
+    if (!this.container || !this.messagesEl) return
     this.init()
   }
 
   init() {
-    this.closeBtn.addEventListener('click', () => this.close())
-    this.sendBtn.addEventListener('click', () => this.send())
-    this.inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.send() })
+    if (this.manageToggle && this.toggleBtn) this.toggleBtn.addEventListener('click', () => this.toggle())
+    if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.close())
+    if (this.sendBtn) this.sendBtn.addEventListener('click', () => this.send())
+    if (this.inputEl) {
+      this.inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') this.send()
+      })
+    }
     this.addBotMessage('Привет! Я AI ассистент Клима. Спросите об услугах, портфолио или ценах.')
+  }
+
+  toggle() {
+    if (this.isOpen) this.close()
+    else this.open()
   }
 
   open() {
     this.isOpen = true
+    this.container.inert = false
     this.container.classList.add('open')
+    if (this.toggleBtn) this.toggleBtn.setAttribute('aria-expanded', 'true')
   }
 
   close() {
     this.isOpen = false
     this.container.classList.remove('open')
+    this.container.inert = true
+    if (this.toggleBtn) this.toggleBtn.setAttribute('aria-expanded', 'false')
   }
 
   send() {
@@ -50,10 +71,10 @@ export class AIChat {
 
   getResponse(text) {
     const lower = text.toLowerCase()
-    for (const [key, val] of Object.entries(this.responses)) {
-      if (key !== 'default' && lower.includes(key)) return val
+    for (const [key, val] of this.responses) {
+      if (lower.includes(key)) return val
     }
-    return this.responses.default
+    return this.defaultReply
   }
 
   addUserMessage(text) {

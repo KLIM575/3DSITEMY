@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KLIM DUSHKIN — Architect. Designer. Developer.</title>
-  <meta name="description" content="KLIM DUSHKIN — Architect, Designer, Developer. Creating immersive digital experiences of any complexity.">
+  <link rel="icon" href="/favicon.ico" sizes="32x32" type="image/x-icon">
+  <meta name="description" content="Клим Душкин — архитектор, дизайнер и разработчик иммерсивных цифровых продуктов: WebGL, 3D, интерактив и сложные веб-приложения.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
   html,body{width:100%;background:#000;color:#e9e9e9;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+    .skip-link{position:absolute;top:-100px;left:16px;z-index:100000;padding:10px 18px;background:#fff;color:#000;font-size:0.85rem;font-weight:500;text-decoration:none;border-radius:2px;font-family:'Inter',sans-serif}
+    .skip-link:focus{top:16px;outline:2px solid #fff;outline-offset:3px}
     #webgl-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
     /* Loading */
@@ -23,7 +27,7 @@
 
     /* Fixed nav */
     .nav{position:fixed;top:0;left:0;width:100%;padding:28px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;mix-blend-mode:difference;transition:opacity 0.4s}
-    .nav-brand{font-size:0.85rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#fff;cursor:pointer}
+    .nav-brand{font-size:0.85rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#fff;cursor:pointer;text-decoration:none}
     .nav-links{display:flex;gap:32px}
     .nav-links a{color:rgba(232,232,232,0.95);text-decoration:none;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;transition:color 0.2s;cursor:pointer}
     .nav-links a:hover,.nav-links a.active{color:var(--accent)}
@@ -33,6 +37,8 @@
     .section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 40px;position:relative}
   .section-inner{max-width:1200px;width:100%;opacity:0;transform:translateY(60px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1); font-size: clamp(0.95rem, 1vw, 1rem); color: var(--text)}
     .section.visible .section-inner{opacity:1;transform:translateY(0)}
+    /* Hero above the fold: visible immediately for LCP (no scroll-reveal opacity delay) */
+    #hero .section-inner{opacity:1;transform:none;transition:none}
 
     /* Section: Hero */
     #hero{min-height:100vh;flex-direction:column;text-align:center}
@@ -49,7 +55,7 @@
     #work{flex-direction:column;padding-top:120px;padding-bottom:120px}
     .section-label{font-size:0.75rem;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:12px}
     .section-title{font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:-2px;margin-bottom:60px;color:#fff}
-    .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;width:100%}
+    .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;width:100%;list-style:none;margin:0;padding:0}
     .project-card{position:relative;aspect-ratio:16/10;overflow:hidden;cursor:pointer;background:#0a0a0a}
     .project-card img{width:100%;height:100%;object-fit:cover;opacity:0.6;transition:opacity 0.6s,transform 0.8s cubic-bezier(0.16,1,0.3,1);filter:grayscale(0.3)}
     .project-card:hover img{opacity:0.9;transform:scale(1.04);filter:grayscale(0)}
@@ -65,10 +71,10 @@
     .about-left h3{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:600;line-height:1.3;margin-bottom:24px;letter-spacing:-1px}
     .about-left p{font-size:0.95rem;line-height:1.9;color:rgba(255,255,255,0.4);font-weight:300;margin-bottom:16px}
     .about-right{padding-top:40px}
-    .about-stats{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px}
+    .about-stats{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px;list-style:none;margin-left:0;padding:0}
     .stat-number{font-size:2.5rem;font-weight:700;letter-spacing:-2px;color:#fff;margin-bottom:4px}
     .stat-label{font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
-    .skills-list{display:flex;flex-direction:column;gap:12px}
+    .skills-list{display:flex;flex-direction:column;gap:12px;list-style:none;margin:0;padding:0}
     .skill-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
     .skill-name{font-size:0.92rem;color:rgba(255,255,255,0.6)}
     .skill-level{font-size:0.8rem;color:rgba(255,255,255,0.28);letter-spacing:1px}
@@ -79,16 +85,15 @@
     .designer-photo{aspect-ratio:3/4;background:#0a0a0a;border-radius:2px;overflow:hidden;position:relative}
     .designer-photo img{width:100%;height:100%;object-fit:cover;opacity:0.8;filter:grayscale(0.2)}
     .designer-photo::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border:1px solid rgba(255,255,255,0.05);pointer-events:none}
-    .designer-info h3{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:600;letter-spacing:-1px;margin-bottom:8px;line-height:1.2}
-    .designer-title{font-size:0.9rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:32px}
+    .designer-title{font-size:0.9rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:32px;margin-top:0}
     .designer-bio{font-size:1.05rem;line-height:1.9;color:rgba(255,255,255,0.45);font-weight:300;margin-bottom:20px}
     .designer-social{display:flex;gap:16px;margin-top:24px}
     .designer-social a{width:40px;height:40px;border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
     .designer-social a:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.05)}
     .designer-social svg{width:18px;height:18px;stroke:rgba(255,255,255,0.5);stroke-width:1.5;fill:none}
     #services{flex-direction:column}
-    .services-list{width:100%}
-    .service-item{display:grid;grid-template-columns:60px 1fr 1fr 40px;gap:24px;align-items:center;padding:36px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.4s;cursor:default}
+    .services-list{width:100%;list-style:none;margin:0;padding:0}
+    .service-item{display:grid;grid-template-columns:60px 1fr 1fr 40px;gap:24px;align-items:center;padding:36px 0;border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.4s;cursor:default;list-style:none}
     .service-item:hover{padding-left:16px;border-color:rgba(255,255,255,0.1)}
     .service-num{font-size:0.7rem;letter-spacing:2px;color:rgba(255,255,255,0.15)}
     .service-name{font-size:1.3rem;font-weight:600;letter-spacing:-0.5px}
@@ -104,7 +109,9 @@
     .contact-item-value{font-size:1.1rem;color:rgba(255,255,255,0.8);font-weight:300}
     .contact-item-value a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15);transition:border-color 0.3s}
     .contact-item-value a:hover{border-color:rgba(255,255,255,0.5)}
-    .contact-form{display:flex;flex-direction:column;gap:16px}
+    .contact-form{display:flex;flex-direction:column;gap:8px}
+    .form-label{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);font-weight:500}
+    .form-field{margin-bottom:8px}
     .form-input{width:100%;padding:16px 0;border:none;border-bottom:1px solid rgba(255,255,255,0.08);background:transparent;color:#fff;font-family:'Inter',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.3s;font-weight:300}
     .form-input::placeholder{color:rgba(255,255,255,0.2)}
     .form-input:focus{border-color:rgba(255,255,255,0.3)}
@@ -119,7 +126,7 @@
     /* Mobile tabs */
     .mobile-tabs{display:none;position:fixed;bottom:0;left:0;width:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);z-index:100;padding:8px 0 env(safe-area-inset-bottom,8px)}
     .mobile-tabs-inner{display:flex;justify-content:space-around}
-    .mobile-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;cursor:pointer}
+    .mobile-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;cursor:pointer;color:inherit;text-decoration:none}
     .mobile-tab svg{width:18px;height:18px;stroke:rgba(255,255,255,0.3);stroke-width:1.5;fill:none}
     .mobile-tab span{font-size:0.55rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
     .mobile-tab.active svg{stroke:#fff}
@@ -129,8 +136,8 @@
     #aiChat{position:fixed;bottom:100px;right:30px;z-index:200;width:340px;max-height:480px;background:rgba(8,8,8,0.97);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(15px) scale(0.97);transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
     #aiChat.open{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
     .chat-header{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center}
-    .chat-header h4{font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.7)}
-    .chat-close{width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .chat-header .chat-title{font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.7);margin:0}
+    .chat-close{width:26px;height:26px;border-radius:50%;border:0;background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;color:inherit}
     .chat-close svg{width:12px;height:12px;stroke:rgba(255,255,255,0.4);stroke-width:1.5;fill:none}
     .chat-messages{padding:14px 18px;height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
     .chat-msg{max-width:85%;padding:9px 13px;border-radius:12px;font-size:0.82rem;line-height:1.6}
@@ -139,14 +146,17 @@
     .chat-input{padding:12px 14px;border-top:1px solid rgba(255,255,255,0.04);display:flex;gap:8px}
     .chat-input input{flex:1;padding:9px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff;font-size:0.82rem;outline:none;font-family:'Inter',sans-serif}
     .chat-input input::placeholder{color:rgba(255,255,255,0.15)}
-    .chat-input button{width:34px;height:34px;border-radius:8px;border:none;background:rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.3s;flex-shrink:0}
+    .chat-input button{width:34px;height:34px;border-radius:8px;border:0;background:rgba(255,255,255,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.3s;flex-shrink:0}
     .chat-input button:hover{background:rgba(255,255,255,0.2)}
     .chat-input button svg{width:14px;height:14px;stroke:#fff;stroke-width:1.5;fill:none}
 
     /* Chat toggle */
-    .chat-toggle{position:fixed;bottom:30px;right:30px;z-index:150;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+    .chat-toggle{position:fixed;bottom:30px;right:30px;z-index:150;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:inherit;padding:0}
     .chat-toggle:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.06)}
     .chat-toggle svg{width:20px;height:20px;stroke:rgba(255,255,255,0.5);stroke-width:1.5;fill:none}
+
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    address.contact-info{font-style:normal}
 
     /* Responsive */
     @media(max-width:768px){
@@ -166,55 +176,58 @@
   </style>
 </head>
 <body>
-  <div id="loading">
+  <a href="#main-content" class="skip-link">Перейти к основному содержимому</a>
+  <div id="loading" role="status" aria-live="polite" aria-busy="true" aria-label="Загрузка страницы">
     <div class="loading-logo">KLIM DUSHKIN</div>
     <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
     <div class="loading-text">Loading</div>
   </div>
 
-  <canvas id="webgl-canvas"></canvas>
+  <canvas id="webgl-canvas" aria-hidden="true"></canvas>
 
-  <nav class="nav">
-    <div class="nav-brand" onclick="scrollToSection('hero')">KLIM DUSHKIN</div>
-    <div class="nav-links">
-      <a onclick="scrollToSection('hero')">Home</a>
-      <a onclick="scrollToSection('work')">Work</a>
-      <a onclick="scrollToSection('designer')">Designer</a>
-      <a onclick="scrollToSection('about')">About</a>
-      <a onclick="scrollToSection('services')">Services</a>
-      <a onclick="scrollToSection('contact')">Contact</a>
-    </div>
-  </nav>
+  <header>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#hero" class="nav-brand">KLIM DUSHKIN</a>
+      <div class="nav-links">
+        <a href="#hero">Home</a>
+        <a href="#work">Work</a>
+        <a href="#designer">Designer</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
 
-  <div class="scroll-container">
+  <main id="main-content" class="scroll-container">
     <!-- HERO -->
-    <section class="section" id="hero">
+    <section class="section visible" id="hero" aria-labelledby="hero-heading">
       <div class="section-inner">
         <p class="hero-label">Architect &middot; Designer &middot; Developer</p>
-        <h1 class="hero-name">KLIM<br>DUSHKIN</h1>
+        <h1 class="hero-name" id="hero-heading">KLIM<br>DUSHKIN</h1>
         <p class="hero-role">Digital Experiences</p>
         <p class="hero-desc">Создаю иммерсивные цифровые продукты любой сложности. От концепции до реализации — сайты, которые запоминаются.</p>
       </div>
-      <div class="scroll-indicator">
+      <div class="scroll-indicator" aria-hidden="true">
         <span>Scroll</span>
         <div class="scroll-line"></div>
       </div>
     </section>
 
     <!-- WORK -->
-    <section class="section" id="work">
+    <section class="section" id="work" aria-labelledby="work-heading">
       <div class="section-inner">
         <p class="section-label">Portfolio</p>
-        <h2 class="section-title">Selected Work</h2>
-        <div class="projects-grid" id="projectsGrid"></div>
+        <h2 class="section-title" id="work-heading">Selected Work</h2>
+        <ul class="projects-grid" id="projectsGrid"></ul>
       </div>
     </section>
 
     <!-- ABOUT -->
-    <section class="section" id="about">
+    <section class="section" id="about" aria-labelledby="about-heading">
       <div class="section-inner">
         <p class="section-label">Background</p>
-        <h2 class="section-title">About</h2>
+        <h2 class="section-title" id="about-heading">About</h2>
         <div class="about-grid">
           <div class="about-left">
             <h3>Душкин Клим<br>Анатольевич</h3>
@@ -222,36 +235,38 @@
             <p>Специализируюсь на WebGL, 3D-графике, интерактивных инсталляциях и сложных веб-приложениях. Работаю с клиентами по всему миру.</p>
           </div>
           <div class="about-right">
-            <div class="about-stats">
-              <div><div class="stat-number">50+</div><div class="stat-label">Проектов</div></div>
-              <div><div class="stat-number">6</div><div class="stat-label">Лет опыта</div></div>
-              <div><div class="stat-number">30+</div><div class="stat-label">Клиентов</div></div>
-              <div><div class="stat-number">12</div><div class="stat-label">Наград</div></div>
-            </div>
-            <div class="skills-list" id="skillsList"></div>
+            <ul class="about-stats" aria-label="Ключевые показатели">
+              <li><div class="stat-number">50+</div><div class="stat-label">Проектов</div></li>
+              <li><div class="stat-number">6</div><div class="stat-label">Лет опыта</div></li>
+              <li><div class="stat-number">30+</div><div class="stat-label">Клиентов</div></li>
+              <li><div class="stat-number">12</div><div class="stat-label">Наград</div></li>
+            </ul>
+            <ul class="skills-list" id="skillsList" aria-label="Навыки и технологии"></ul>
           </div>
         </div>
       </div>
     </section>
 
     <!-- DESIGNER -->
-    <section class="section" id="designer">
+    <section class="section" id="designer" aria-labelledby="designer-heading">
       <div class="section-inner">
         <p class="section-label">Featured</p>
-        <h2 class="section-title">Pavel Vishnevsky</h2>
+        <h2 class="section-title" id="designer-heading">Pavel Vishnevsky</h2>
         <div class="designer-card">
           <div class="designer-photo">
-            <img src="/pavel.jpg" alt="Pavel Vishnevsky">
+            <picture>
+              <source srcset="/pavel.webp" type="image/webp">
+              <img src="/pavel.jpg" alt="Портрет Павла Вишневского" width="480" height="640" loading="lazy" decoding="async">
+            </picture>
           </div>
           <div class="designer-info">
-            <h3>Pavel Vishnevsky</h3>
             <p class="designer-title">Designer • Архитектор • Видеорежиссёр • Скульптор • Дизайнер мебели</p>
             <p class="designer-bio">Талантливый дизайнер с уникальным видением. Специализируется на создании визуальных идентичностей, которые оставляют след. Работает на стыке искусства и технологий, создавая незабываемые впечатления.</p>
             <p class="designer-bio">Сотрудничал с ведущими брендами мира, создавая дизайн для цифровых продуктов, брендинга и рекламных кампаний.</p>
             <div class="designer-social">
-              <a href="#" title="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="1.5"/></svg></a>
-              <a href="#" title="Behance"><svg viewBox="0 0 24 24"><path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14h-8.027c.13 3.211 3.483 3.312 4.588 2.029h3.168zm-7.686-4h4.965c-.105-1.547-1.136-2.219-2.477-2.219-1.466 0-2.277.768-2.488 2.219zm-9.574 6.988h-6.466v-14.967h6.953c5.476.081 5.58 5.444 2.72 6.906 3.461 1.26 3.577 8.061-3.207 8.061zm-3.466-8.988h3.584c2.508 0 2.906-3-.312-3h-3.272v3zm3.391 3h-3.391v3.016h3.341c3.055 0 2.868-3.016.05-3.016z"/></svg></a>
-              <a href="#" title="Dribbble"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"/><path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"/><path d="M8.56 2.75c4.37 6 6 9.42 8 17.72"/></svg></a>
+              <a href="#" aria-label="Instagram Павла Вишневского"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="1.5"/></svg></a>
+              <a href="#" aria-label="Behance Павла Вишневского"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14h-8.027c.13 3.211 3.483 3.312 4.588 2.029h3.168zm-7.686-4h4.965c-.105-1.547-1.136-2.219-2.477-2.219-1.466 0-2.277.768-2.488 2.219zm-9.574 6.988h-6.466v-14.967h6.953c5.476.081 5.58 5.444 2.72 6.906 3.461 1.26 3.577 8.061-3.207 8.061zm-3.466-8.988h3.584c2.508 0 2.906-3-.312-3h-3.272v3zm3.391 3h-3.391v3.016h3.341c3.055 0 2.868-3.016.05-3.016z"/></svg></a>
+              <a href="#" aria-label="Dribbble Павла Вишневского"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"/><path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"/><path d="M8.56 2.75c4.37 6 6 9.42 8 17.72"/></svg></a>
             </div>
           </div>
         </div>
@@ -259,21 +274,21 @@
     </section>
 
     <!-- SERVICES -->
-    <section class="section" id="services">
+    <section class="section" id="services" aria-labelledby="services-heading">
       <div class="section-inner">
         <p class="section-label">What I Do</p>
-        <h2 class="section-title">Services</h2>
-        <div class="services-list" id="servicesList"></div>
+        <h2 class="section-title" id="services-heading">Services</h2>
+        <ol class="services-list" id="servicesList" aria-label="Услуги"></ol>
       </div>
     </section>
 
     <!-- CONTACT -->
-    <section class="section" id="contact">
+    <section class="section" id="contact" aria-labelledby="contact-heading">
       <div class="section-inner">
         <p class="section-label">Get In Touch</p>
-        <h2 class="section-title">Contact</h2>
+        <h2 class="section-title" id="contact-heading">Contact</h2>
         <div class="contact-grid">
-          <div class="contact-info">
+          <address class="contact-info">
             <div>
               <div class="contact-item-label">Имя</div>
               <div class="contact-item-value">Душкин Клим Анатольевич</div>
@@ -289,8 +304,8 @@
             <div>
               <div class="contact-item-label">Telegram</div>
               <div class="contact-item-value">
-                <a href="https://t.me/YA_ODIN_K" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-label="Telegram" role="img" style="flex:0 0 auto;">
+                <a href="https://t.me/YA_ODIN_K" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" style="flex:0 0 auto;">
                     <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
                   </svg>
                   YA_ODIN_K
@@ -301,75 +316,86 @@
               <div class="contact-item-label">Локация</div>
               <div class="contact-item-value">Россия, доступен worldwide</div>
             </div>
-          </div>
-          <form class="contact-form" id="contactForm">
-            <input class="form-input" type="text" placeholder="Ваше имя" required>
-            <input class="form-input" type="email" placeholder="Email" required>
-            <input class="form-input" type="text" placeholder="Тема проекта">
-            <textarea class="form-input" placeholder="Расскажите о вашем проекте..." required></textarea>
+          </address>
+          <form class="contact-form" id="contactForm" name="contact" aria-label="Форма обратной связи">
+            <div class="form-field">
+              <label class="form-label" for="contact-name">Имя</label>
+              <input class="form-input" id="contact-name" name="name" type="text" placeholder="Ваше имя" autocomplete="name" required>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="contact-email">Email</label>
+              <input class="form-input" id="contact-email" name="email" type="email" placeholder="Email" autocomplete="email" required>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="contact-subject">Тема</label>
+              <input class="form-input" id="contact-subject" name="subject" type="text" placeholder="Тема проекта" autocomplete="off">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="contact-message">Сообщение</label>
+              <textarea class="form-input" id="contact-message" name="message" placeholder="Расскажите о вашем проекте..." required></textarea>
+            </div>
             <button type="submit" class="form-submit">Отправить</button>
           </form>
         </div>
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <div class="footer">
+    <footer class="footer">
       <span>&copy; 2026 KLIM DUSHKIN</span>
       <span>ALL RIGHTS RESERVED</span>
-    </div>
-  </div>
+    </footer>
+  </main>
 
   <!-- Mobile tabs -->
-  <div class="mobile-tabs">
+  <nav class="mobile-tabs" aria-label="Мобильная навигация">
     <div class="mobile-tabs-inner">
-      <div class="mobile-tab active" onclick="scrollToSection('hero')">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <a href="#hero" class="mobile-tab active">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         <span>Home</span>
-      </div>
-      <div class="mobile-tab" onclick="scrollToSection('work')">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>
+      </a>
+      <a href="#work" class="mobile-tab">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>
         <span>Work</span>
-      </div>
-      <div class="mobile-tab" onclick="scrollToSection('designer')">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="#designer" class="mobile-tab">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>Designer</span>
-      </div>
-      <div class="mobile-tab" onclick="scrollToSection('about')">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="#about" class="mobile-tab">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>About</span>
-      </div>
-      <div class="mobile-tab" onclick="scrollToSection('services')">
-        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </a>
+      <a href="#services" class="mobile-tab">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         <span>Services</span>
-      </div>
-      <div class="mobile-tab" onclick="scrollToSection('contact')">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>
+      </a>
+      <a href="#contact" class="mobile-tab">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>
         <span>Contact</span>
-      </div>
+      </a>
     </div>
-  </div>
+  </nav>
 
   <!-- AI Chat -->
-  <div class="chat-toggle" id="chatToggle">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-  </div>
-  <div id="aiChat">
+  <button type="button" class="chat-toggle" id="chatToggle" aria-expanded="false" aria-controls="aiChat" title="Открыть чат с ассистентом">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </button>
+  <div id="aiChat" role="dialog" aria-modal="true" aria-labelledby="chatDialogTitle" inert>
     <div class="chat-header">
-      <h4>KLIM AI Assistant</h4>
-      <div class="chat-close" id="chatClose">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </div>
+      <h3 class="chat-title" id="chatDialogTitle">KLIM AI Assistant</h3>
+      <button type="button" class="chat-close" id="chatClose" aria-label="Закрыть чат">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
     <div class="chat-input">
-      <input type="text" id="chatInput" placeholder="Ask about projects, services...">
-      <button id="chatSend">
-        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      <label for="chatInput" class="visually-hidden">Сообщение ассистенту</label>
+      <input type="text" id="chatInput" name="chat-message" placeholder="Ask about projects, services..." autocomplete="off">
+      <button type="button" id="chatSend" aria-label="Отправить сообщение">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
-
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

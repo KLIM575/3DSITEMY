@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# After deploy, add your sitemap (absolute URL):
+# Sitemap: https://example.com/sitemap.xml
